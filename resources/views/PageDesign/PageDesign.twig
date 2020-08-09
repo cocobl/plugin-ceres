@@ -53,7 +53,7 @@
     window.trace = function(key, callback) {
         var start = (new Date()).getTime();
         callback();
-        console.log('[' + (new Date()).getTime() - start + 'ms] ' + key);
+        console.log('[' + ((new Date()).getTime() - start) + 'ms] ' + key);
     }
 </script>
 
@@ -264,9 +264,8 @@
 
     if (App.config.log.checkSyntax)
     {
+        var rootElement = document.getElementById("vue-app");
         trace('Init vueApp', function () {
-            var rootElement = document.getElementById("vue-app");
-
             rootElement.innerHTML = rootElement.innerHTML.replace(/(?:^|\s)(?::|v-bind:)\S+=(?:""|'')/g, "");
 
             window.vueApp = new Vue({
