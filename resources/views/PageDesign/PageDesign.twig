@@ -50,6 +50,11 @@
     {
         document.body.classList.add("no-touch");
     }
+    window.trace = function(key, callback) {
+        var start = (new Date()).getTime();
+        callback();
+        console.log('[' + (new Date()).getTime() - start + 'ms] ' + key);
+    }
 </script>
 
 <div id="vue-app" class="app">
@@ -251,24 +256,34 @@
         return source += "?v={{ buildHash }}";
     };
 
-    window.vueEventHub = new Vue();
+    Vue.config.performance = true;
+
+    trace('Init vueEventHub', function () {
+        window.vueEventHub = new Vue();
+    });
 
     if (App.config.log.checkSyntax)
     {
-        var rootElement = document.getElementById("vue-app");
+        trace('Init vueApp', function () {
+            var rootElement = document.getElementById("vue-app");
 
-        rootElement.innerHTML = rootElement.innerHTML.replace(/(?:^|\s)(?::|v-bind:)\S+=(?:""|'')/g, "");
+            rootElement.innerHTML = rootElement.innerHTML.replace(/(?:^|\s)(?::|v-bind:)\S+=(?:""|'')/g, "");
 
-        window.vueApp = new Vue({
-            store: window.ceresStore
+            window.vueApp = new Vue({
+                store: window.ceresStore
+            });
+
         });
 
-        vueApp.$mount( rootElement.cloneNode(true) );
+        trace('Mount app', function () {
+            vueApp.$mount( rootElement.cloneNode(true) );
 
-        if (vueApp.$el.id === "vue-app")
-        {
-            document.body.replaceChild( vueApp.$el, rootElement );
-        }
+            if (vueApp.$el.id === "vue-app")
+            {
+                document.body.replaceChild( vueApp.$el, rootElement );
+            }
+        });
+
     }
     else
     {
